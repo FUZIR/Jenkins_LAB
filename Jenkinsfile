@@ -127,20 +127,6 @@ pipeline {
                 reportFiles: 'report.html',
                 reportName: 'Test Report'
             ])
-
-            script {
-                // Генерація PDF і відправка на пошту
-                sh 'wkhtmltopdf report.html report.pdf'
-                emailext (
-                    subject: "Test report for ${params.REPO_NAME}",
-                    body: """<p>PDF Test report is attached.</p>
-                             <p>Repository: ${params.REPO_NAME}</p>
-                             <p>Author: ${author}</p>""",
-                    to: "${teacherEmail}",
-                    mimeType: 'text/html',
-                    attachmentsPattern: "report.pdf"
-                )
-            }
         }
     }
 }
