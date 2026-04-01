@@ -1,31 +1,24 @@
+// Глобальні змінні, щоб вони були доступні у всіх stage
 def testCases = []
 def reportContent = new StringBuilder()
 def author = ""
-def teacherEmail = "твій_викладач@gmail.com" // Зміни на реальну пошту викладача
+def teacherEmail = "k.lipovok@gmail.com" // Пошта викладача
 
 pipeline {
     agent any
 
-    // Вхідні параметри пайплайну
+    // Залишаємо лише параметр для красивого відображення імені в email та HTML-звіті
     parameters {
-        string(name: 'REPO_NAME', defaultValue: '', description: 'Ім’я репозиторію, наприклад: huk_dmytro/course2025_petrenko.ii')
-        string(name: 'GIT_SSH_URL', defaultValue: '', description: 'SSH URL до репозиторію')
-        string(name: 'BRANCH_NAME', defaultValue: 'refs/heads/master', description: 'Повна назва гілки, як refs/heads/master')
-    }
-
-    environment {
-        CREDENTIALS_ID = 'AGS_Gitea_SSH'
+        string(name: 'REPO_NAME', defaultValue: 'Lab4_Repo', description: 'Ім’я репозиторію для звіту')
     }
 
     stages {
         stage('Checkout') {
             steps {
                 script {
-                    if (!params.GIT_SSH_URL?.trim()) error("GIT_SSH_URL не задано! Упевніться, що Webhook передає параметри.")
-
-                    def branch = params.BRANCH_NAME.replaceFirst(/^refs\/heads\//, '')
-                    echo "Клонуємо репозиторій: ${params.GIT_SSH_URL}, гілка: ${branch}"
-                    git branch: branch, credentialsId: env.CREDENTIALS_ID, url: params.GIT_SSH_URL
+                    echo "Скачуємо код із публічного репозиторію..."
+                    // Ця команда автоматично бере код із посилання, налаштованого у веб-інтерфейсі Jenkins (Pipeline -> SCM)
+                    checkout scm
                 }
             }
         }
